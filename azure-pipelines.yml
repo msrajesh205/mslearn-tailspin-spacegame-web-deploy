@@ -1,16 +1,10 @@
 trigger:
 - '*'
-
-pool:
-  vmImage: 'ubuntu-16.04'
-  demands:
-    - npm
-
 variables:
   buildConfiguration: 'Release'
   wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
   dotnetSdkVersion: '3.1.100'
-
+#-----Build Stage---------------
 stages:
     - stage: 'Build'
       displayName: 'Build the web application'
