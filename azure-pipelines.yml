@@ -4,6 +4,8 @@ variables:
   buildConfiguration: 'Release'
   wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
   dotnetSdkVersion: '3.1.100'
+  releaseBranchName: 'release' #created new var for release branch
+
 #-----Build Stage---------------
 stages:
     - stage: 'Build'
@@ -66,9 +68,15 @@ stages:
         - publish: '$(Build.ArtifactStagingDirectory)'
           artifact: drop
     #####-------------Deploy--------
-    - stage: 'Deploy'
-      displayName: 'Deploy the web application'
+    - stage: 'Dev'
+      displayName: 'Deploy to the dev environment'
       dependsOn: Build
+      condition: |
+        and
+        (
+          succeeded(),
+          eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+        )
       jobs:
       - deployment: Deploy
         pool:
@@ -86,5 +94,5 @@ stages:
                 displayName: 'Azure App Service Deploy: website'
                 inputs:
                   azureSubscription: 'Resource Manager - Tailspin - Space Game'
-                  appName: '$(WebAppName)'
+                  appName: '$(WebAppNameDev)'
                   package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
